@@ -1,0 +1,14 @@
+{
+  "name": "mini-juego-3d",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Mini juego 3D con Three.js",
+  "scripts": {
+    "runserver": "http-server . -p 8000 -c-1 -o",
+    "dev": "npm run runserver",
+    "start": "npm run runserver"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
