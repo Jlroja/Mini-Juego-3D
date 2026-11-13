@@ -1,7 +1,7 @@
-import { PALETA, PARTES } from '../config/colores.js';
+import { PALETA, PARTES, PARTES_CARRO } from '../config/colores.js';
 
 // Interfaz HTML del menú: JUGAR, PERSONALIZAR y CONTROLES.
-export function iniciarMenuUI({ colores, alCambiarColor, alAleatorio, alJugar }) {
+export function iniciarMenuUI({ colores, alCambiarColor, alAleatorio, alJugar, alEntrarAlMundo, alVer }) {
   const $ = (id) => document.getElementById(id);
 
   // ---------- Personalizar ----------
@@ -31,18 +31,26 @@ export function iniciarMenuUI({ colores, alCambiarColor, alAleatorio, alJugar })
     colorLibre.value = colores[parteActiva];
   }
 
+  // Al elegir una pestaña del carro se muestra el carro; al elegir una del personaje, el personaje
+  const esCarro = (parte) => PARTES_CARRO.includes(parte);
+  const btnVer = $('btnVer');
+  function elegirParte(parte) {
+    parteActiva = parte;
+    document.querySelectorAll('.pestana').forEach((t) => t.classList.toggle('activa', t.dataset.parte === parte));
+    btnVer.innerHTML = esCarro(parte) ? '🧍 Ver personaje' : '🚗 Ver carro';
+    alVer?.(esCarro(parte) ? 'carro' : 'personaje');
+    pintarPaleta();
+  }
   document.querySelectorAll('.pestana').forEach((tab) => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.pestana').forEach((t) => t.classList.toggle('activa', t === tab));
-      parteActiva = tab.dataset.parte;
-      pintarPaleta();
-    });
+    tab.addEventListener('click', () => elegirParte(tab.dataset.parte));
   });
+  btnVer.addEventListener('click', () => elegirParte(esCarro(parteActiva) ? PARTES[0] : PARTES_CARRO[0]));
 
   colorLibre.addEventListener('input', () => { alCambiarColor(parteActiva, colorLibre.value); pintarPaleta(); });
 
   $('btnAleatorio').addEventListener('click', () => {
-    PARTES.forEach((p) => alCambiarColor(p, PALETA[Math.floor(Math.random() * PALETA.length)]));
+    const grupo = esCarro(parteActiva) ? PARTES_CARRO : PARTES;        // solo lo que se está viendo
+    grupo.forEach((p) => alCambiarColor(p, PALETA[Math.floor(Math.random() * PALETA.length)]));
     pintarPaleta();
     alAleatorio?.();
   });
@@ -63,12 +71,10 @@ export function iniciarMenuUI({ colores, alCambiarColor, alAleatorio, alJugar })
     alJugar?.();
     setTimeout(() => {
       const tr = $('transicion');
-      const texto = tr.querySelector('.transicion__texto');
       tr.hidden = false;
       setTimeout(() => {
-        // Aquí se cargará el nivel del juego cuando exista.
-        texto.textContent = '¡PRÓXIMAMENTE!';
-        setTimeout(() => { tr.hidden = true; texto.textContent = '¡PREPARADOS!'; }, 1400);
+        alEntrarAlMundo?.();                       // detrás de la cortina se cambia al mundo
+        setTimeout(() => { tr.hidden = true; }, 500);
       }, 1200);
     }, 700);
   });

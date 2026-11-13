@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { Personaje } from '../entidades/Personaje.js';
+import { Vehiculo } from '../entidades/Vehiculo.js';
 
-// Escena 3D de la pantalla de inicio: personaje sobre una plataforma iluminada.
+// Escena 3D de la pantalla de inicio: el personaje (o el carro) sobre una plataforma iluminada.
 export class EscenaMenu {
   constructor(canvas, { alArrastrar } = {}) {
     this.canvas = canvas;
@@ -31,6 +32,13 @@ export class EscenaMenu {
     this.cuerpo = new THREE.Group();
     this.personaje = new Personaje();
     this.cuerpo.add(this.personaje.grupo);
+    // El carro se muestra a escala reducida para que quepa en la plataforma
+    this.vehiculo = new Vehiculo();
+    this.soporteCarro = new THREE.Group();
+    this.soporteCarro.scale.setScalar(0.5);
+    this.soporteCarro.visible = false;
+    this.soporteCarro.add(this.vehiculo.grupo);
+    this.cuerpo.add(this.soporteCarro);
     this.pivote.add(this.cuerpo);
     this.scene.add(this.pivote);
 
@@ -39,15 +47,30 @@ export class EscenaMenu {
     this.arrastrando = false;
     this.salto = null;
     this.reloj = new THREE.Clock();
+    this.activa = true;
 
     this.#activarArrastre();
-    window.addEventListener('resize', () => this.ajustarTamano());
+    window.addEventListener('resize', () => this.activa && this.ajustarTamano());
     this.ajustarTamano();
     this.renderer.setAnimationLoop(() => this.#actualizar());
   }
 
   saltar() {
     this.salto = { inicio: this.reloj.elapsedTime };
+  }
+
+  // Elige qué se ve sobre la plataforma: 'personaje' o 'carro'
+  mostrar(cual) {
+    this.personaje.grupo.visible = cual !== 'carro';
+    this.soporteCarro.visible = cual === 'carro';
+  }
+
+  // Apaga el menú para que otra escena (el mundo) use el mismo lienzo y renderizador
+  detener() {
+    this.activa = false;
+    this.arrastrando = false;
+    this.canvas.classList.remove('arrastrando');
+    this.renderer.setAnimationLoop(null);
   }
 
   // Personaje a la izquierda (o arriba en pantallas estrechas)
@@ -124,6 +147,7 @@ export class EscenaMenu {
     const c = this.canvas;
     let ultimoX = 0;
     c.addEventListener('pointerdown', (e) => {
+      if (!this.activa) return;
       this.arrastrando = true; ultimoX = e.clientX; this.velocidad = 0;
       c.setPointerCapture(e.pointerId);
       c.classList.add('arrastrando');

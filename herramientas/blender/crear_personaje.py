@@ -328,3 +328,8 @@ bpy.ops.export_scene.gltf(filepath=OUT_GLB, export_format='GLB', use_selection=T
 info["glb_bytes"] = os.path.getsize(OUT_GLB)
 bpy.ops.object.select_all(action='DESELECT')
 bpy.ops.wm.save_as_mainfile(filepath=OUT_BLEND)
+
+# ---------------- Esqueleto ----------------
+# Le pone los huesos al personaje y vuelve a exportar el .glb y el .blend ya listos para animar.
+import runpy
+runpy.run_path(os.path.join(os.path.dirname(os.path.abspath(__file__)), "rig_personaje.py"))

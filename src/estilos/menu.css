@@ -142,14 +142,17 @@ button { font: inherit; cursor: pointer; border: 0; }
 .panel[hidden] { display: none; }
 @keyframes aparecer { from { opacity: 0; transform: translateY(-10px) scale(.97); } }
 
-.pestanas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+/* 5 pestañas: 3 arriba (personaje) y 2 abajo (carro) */
+.pestanas { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-bottom: 10px; }
+.pestana { grid-column: span 2; }
+.pestana:nth-child(n+4) { grid-column: span 3; }
 .pestana {
   padding: 9px 4px; border-radius: 12px; font-weight: 900; font-size: 14px;
   background: #ece8ff; color: var(--tinta);
 }
 .pestana.activa { background: var(--tinta); color: #fff; }
 
-.paleta { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+.paleta { display: grid; grid-template-columns: repeat(9, 1fr); gap: 8px; }
 .muestra {
   aspect-ratio: 1; border-radius: 50%;
   border: 3px solid #fff;
@@ -173,6 +176,17 @@ button { font: inherit; cursor: pointer; border: 0; }
   background: var(--tinta); color: #fff; box-shadow: 0 4px 0 #000;
 }
 .btn-mini:active { transform: translateY(3px); box-shadow: 0 1px 0 #000; }
+
+/* Con el panel abierto el menú se compacta para que todo quepa en la pantalla */
+.menu { max-height: calc(100vh - 24px); transition: gap .2s; }
+.menu:has(.panel:not([hidden])) { gap: 10px; }
+.menu:has(.panel:not([hidden])) .logo { margin: 0; }
+.menu:has(.panel:not([hidden])) .logo span:first-child { font-size: clamp(26px, 3.4vw, 36px); }
+.menu:has(.panel:not([hidden])) .logo span:last-child { font-size: clamp(32px, 4.2vw, 46px); }
+.menu:has(.panel:not([hidden])) .btn-jugar { font-size: clamp(28px, 3.4vw, 36px); padding: 8px 20px 12px; border-radius: 20px; }
+.menu:has(.panel:not([hidden])) .btn-sec { flex-direction: row; justify-content: center; font-size: 15px; padding: 8px 8px 10px; border-radius: 16px; }
+.menu:has(.panel:not([hidden])) .btn-sec svg { width: 24px; height: 24px; }
+.panel { min-height: 0; overflow-y: auto; }      /* último recurso en pantallas muy bajas */
 
 /* ---------- Modal controles ---------- */
 .modal {

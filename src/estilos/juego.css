@@ -1,0 +1,71 @@
+/* Estilos de la pantalla de juego (el mundo) */
+
+/* Al entrar al mundo se esconde todo lo del menú */
+body.jugando .menu,
+body.jugando .fondo,
+body.jugando .pista-arrastre,
+body.jugando .cargando,
+body.jugando .btn-ver { display: none; }
+
+.hud { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
+.hud[hidden] { display: none; }
+
+.hud__menu {
+  position: absolute; top: 14px; left: 14px; pointer-events: auto;
+  padding: 8px 16px 10px; border-radius: 14px;
+  font-family: "Lilita One", sans-serif; font-size: 18px; letter-spacing: .5px;
+  color: var(--tinta); background: #fff; box-shadow: 0 4px 0 var(--tinta);
+}
+.hud__menu:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--tinta); }
+
+.hud__ayuda {
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px;
+  width: max-content; max-width: calc(100vw - 24px);
+  padding: 8px 18px; border-radius: 999px;
+  background: rgba(29, 20, 66, 0.45); color: #fff; font-weight: 800; font-size: 14px;
+}
+.hud__ayuda span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.hud__ayuda kbd {
+  min-width: 24px; height: 24px; padding: 0 6px; font-size: 13px;
+  border-width: 2px; border-radius: 7px; box-shadow: 0 2px 0 var(--tinta);
+}
+
+/* Teclas del cuadro de controles */
+.teclas-fila { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.teclas-fila .espacio { width: 120px; }
+.shift { height: 52px; font-size: 18px; letter-spacing: 1px; background: linear-gradient(180deg, #ffe1c2, #ff9d4d); }
+
+@media (max-width: 760px) {
+  .hud__ayuda { border-radius: 18px; font-size: 12px; }
+}
+
+/* Aviso flotante: "Pulsa E para subir al carro" */
+.hud__aviso {
+  position: absolute; left: 50%; bottom: 76px; transform: translateX(-50%);
+  padding: 10px 20px 12px; border-radius: 16px; white-space: nowrap;
+  font-family: "Lilita One", sans-serif; font-size: 20px; letter-spacing: .5px;
+  color: var(--tinta); background: var(--amarillo); box-shadow: 0 5px 0 var(--amarillo-osc);
+  animation: aviso .25s ease-out;
+}
+.hud__aviso[hidden] { display: none; }
+.hud__aviso kbd { min-width: 30px; height: 30px; font-size: 17px; border-width: 2px; border-radius: 8px; box-shadow: 0 3px 0 var(--tinta); margin: 0 4px; }
+@keyframes aviso { from { opacity: 0; transform: translateX(-50%) translateY(10px); } }
+
+/* Menú: botón para cambiar entre ver el personaje y ver el carro */
+.btn-ver {
+  position: fixed; z-index: 4; left: 30%; top: 5%; transform: translateX(-50%);
+  padding: 9px 18px 11px; border-radius: 14px; white-space: nowrap;
+  font-family: "Lilita One", sans-serif; font-size: 17px; letter-spacing: .5px;
+  color: var(--tinta); background: #fff; box-shadow: 0 4px 0 var(--tinta);
+}
+.btn-ver:active { transform: translateX(-50%) translateY(3px); box-shadow: 0 1px 0 var(--tinta); }
+.tecla-e { background: linear-gradient(180deg, #d8f1ff, #6cc5ff); }
+
+@media (min-width: 761px) and (min-aspect-ratio: 1/1) {
+  .controles { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 760px), (max-aspect-ratio: 1/1) {
+  .btn-ver { left: 50%; top: 50%; font-size: 15px; }
+  .hud__aviso { font-size: 16px; bottom: 96px; }
+}

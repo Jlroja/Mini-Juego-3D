@@ -5,6 +5,7 @@ const BASE = 'public/assets';
 export const RUTAS = {
   modelos: {
     personaje: `${BASE}/modelos/personaje/personaje.glb`,
+    carro: `${BASE}/modelos/vehiculos/carro.glb`,
   },
   sonidos: {
     musica: `${BASE}/sonidos/musica`,
