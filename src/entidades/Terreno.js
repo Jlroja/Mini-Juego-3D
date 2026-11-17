@@ -1,10 +1,21 @@
 import * as THREE from 'three';
 import { MUNDO } from '../config/mundo.js';
-import { crearAzar, escalon } from '../sistemas/azar.js';
+import { crearAzar, escalon, mezclar } from '../sistemas/azar.js';
+
+const explanadas = [];                          // zonas aplanadas: { x, z, r, borde, y }
 
 // Altura del suelo en cualquier punto del mundo. La usan el terreno (para dibujarse),
 // el personaje (para pisar), la cámara y la vegetación: todos comparten la misma fórmula.
 export function alturaTerreno(x, z) {
+  let h = alturaNatural(x, z);
+  for (const e of explanadas) {                 // bajo las cabañas el suelo es plano
+    const d = Math.hypot(x - e.x, z - e.z);
+    if (d < e.borde) h = mezclar(e.y, h, escalon(d, e.r, e.borde));
+  }
+  return h;
+}
+
+function alturaNatural(x, z) {
   // Colinas suaves
   let h = 1.5 * Math.sin(x * 0.062 + 1.3) * Math.cos(z * 0.055 - 0.4)
         + 0.9 * Math.sin(x * 0.027 - z * 0.036 + 2.1)
@@ -22,6 +33,7 @@ export function alturaTerreno(x, z) {
 // Suelo del mundo: pasto con colinas y un camino de tierra en circuito.
 export class Terreno {
   constructor() {
+    explanadas.length = 0;
     const n = MUNDO.radiosCamino.length;
     this.camino = new THREE.CatmullRomCurve3(
       MUNDO.radiosCamino.map((radio, i) => {
@@ -43,6 +55,30 @@ export class Terreno {
   }
 
   altura(x, z) { return alturaTerreno(x, z); }
+
+  // Deja plano el terreno en cada zona { x, z, r, borde } (para apoyar construcciones)
+  // y vuelve a calcular la malla del suelo.
+  aplanar(zonas) {
+    for (const z of zonas) explanadas.push({ ...z, y: alturaNatural(z.x, z.z) });
+    const pos = this.malla.geometry.attributes.position;
+    for (let i = 0; i < pos.count; i++) pos.setY(i, alturaTerreno(pos.getX(i), pos.getZ(i)));
+    pos.needsUpdate = true;
+    this.malla.geometry.computeVertexNormals();
+  }
+
+  // Pinta un sendero de tierra recto entre dos puntos (del camino a la puerta de una cabaña)
+  pintarSendero(x1, z1, x2, z2, ancho = 1.3) {
+    const { c, px, esc } = this.pincel;
+    c.lineCap = 'round';
+    for (const [color, grosor, difuso] of [['rgba(96,120,50,0.8)', 1.5, 4], ['#a9824f', 1, 2], ['rgba(200,165,110,0.55)', 0.45, 3]]) {
+      c.filter = `blur(${difuso}px)`;
+      c.strokeStyle = color;
+      c.lineWidth = ancho * esc * grosor;
+      c.beginPath(); c.moveTo(px(x1), px(z1)); c.lineTo(px(x2), px(z2)); c.stroke();
+    }
+    c.filter = 'none';
+    this.textura.needsUpdate = true;
+  }
 
   // Distancia (en metros) desde un punto hasta el centro del camino
   distanciaAlCamino(x, z) {
@@ -110,6 +146,8 @@ export class Terreno {
     const tex = new THREE.CanvasTexture(lienzo);
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 8;
+    this.pincel = { c, px, esc };              // para seguir pintando después (senderos)
+    this.textura = tex;
     return tex;
   }
 

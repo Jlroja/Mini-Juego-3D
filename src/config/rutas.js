@@ -6,6 +6,8 @@ export const RUTAS = {
   modelos: {
     personaje: `${BASE}/modelos/personaje/personaje.glb`,
     carro: `${BASE}/modelos/vehiculos/carro.glb`,
+    cabana: `${BASE}/modelos/paradas/cabana.glb`,
+    interiorCabana: `${BASE}/modelos/paradas/interior_cabana.glb`,
   },
   sonidos: {
     musica: `${BASE}/sonidos/musica`,
@@ -14,4 +16,5 @@ export const RUTAS = {
   },
   texturas: `${BASE}/texturas`,
   imagenes: `${BASE}/imagenes`,
+  contenidos: 'public/contenidos/paradas',   // un archivo .md por cabaña (su reflexión)
 };

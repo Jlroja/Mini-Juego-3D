@@ -6,7 +6,8 @@ import { crearAzar } from '../sistemas/azar.js';
 // Lo que rodea al jugador: árboles, arbustos, rocas y flores.
 // Cada tipo se dibuja de una sola vez (InstancedMesh) para que el juego vaya fluido.
 export class Vegetacion {
-  constructor(terreno, inicio) {
+  // zonasLibres = [{ x, z, r }]: sitios donde no debe crecer nada (cabañas, tablero)
+  constructor(terreno, inicio, zonasLibres = []) {
     this.grupo = new THREE.Group();
     this.obstaculos = [];                 // { x, z, r } contra lo que choca el jugador
     const azar = crearAzar(MUNDO.semilla + 2);
@@ -21,6 +22,7 @@ export class Vegetacion {
         const x = Math.cos(a) * r, z = Math.sin(a) * r;
         if (rMin < R && terreno.distanciaAlCamino(x, z) < margenCamino) continue;
         if (Math.hypot(x - inicio.x, z - inicio.z) < margenCamino + 2) continue;
+        if (zonasLibres.some((l) => Math.hypot(x - l.x, z - l.z) < l.r)) continue;
         if (separacion && ocupados.some((o) => Math.hypot(o.x - x, o.z - z) < separacion)) continue;
         if (separacion) ocupados.push({ x, z });
         return { x, z, y: terreno.altura(x, z) };

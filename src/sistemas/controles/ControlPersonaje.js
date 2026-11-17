@@ -1,11 +1,12 @@
 import { JUGADOR, MUNDO } from '../../config/mundo.js';
-import { suavizar } from '../azar.js';
+import { limitar, suavizar } from '../azar.js';
 
 // Mueve al personaje por el mundo según el teclado: caminar, correr (Shift) y saltar (Espacio).
 // Lo mantiene pegado al suelo, lo frena contra árboles y rocas y no lo deja salir del mundo.
 export class ControlPersonaje {
-  constructor({ personaje, terreno, obstaculos, teclado }) {
-    Object.assign(this, { personaje, terreno, obstaculos, teclado });
+  // zona = { minX, maxX, minZ, maxZ }: si se da (dentro de una cabaña), el personaje no sale de ese rectángulo
+  constructor({ personaje, terreno, obstaculos, teclado, zona = null }) {
+    Object.assign(this, { personaje, terreno, obstaculos, teclado, zona });
     this.pos = personaje.grupo.position;
     this.velX = 0; this.velZ = 0; this.velY = 0;
     this.angulo = 0;
@@ -48,7 +49,10 @@ export class ControlPersonaje {
     }
     // Límite del mundo
     const r = Math.hypot(p.x, p.z);
-    if (r > MUNDO.radioJugable) {
+    if (this.zona) {
+      p.x = limitar(p.x, this.zona.minX, this.zona.maxX);
+      p.z = limitar(p.z, this.zona.minZ, this.zona.maxZ);
+    } else if (r > MUNDO.radioJugable) {
       p.x *= MUNDO.radioJugable / r;
       p.z *= MUNDO.radioJugable / r;
     }

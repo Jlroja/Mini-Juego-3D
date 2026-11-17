@@ -11,7 +11,7 @@ body.jugando .btn-ver { display: none; }
 .hud[hidden] { display: none; }
 
 .hud__menu {
-  position: absolute; top: 14px; left: 14px; pointer-events: auto;
+  position: absolute; top: 14px; right: 14px; pointer-events: auto;
   padding: 8px 16px 10px; border-radius: 14px;
   font-family: "Lilita One", sans-serif; font-size: 18px; letter-spacing: .5px;
   color: var(--tinta); background: #fff; box-shadow: 0 4px 0 var(--tinta);
@@ -69,3 +69,84 @@ body.jugando .btn-ver { display: none; }
   .btn-ver { left: 50%; top: 50%; font-size: 15px; }
   .hud__aviso { font-size: 16px; bottom: 96px; }
 }
+
+/* ---------- Mapa de la esquina ---------- */
+.minimapa {
+  position: absolute; top: 12px; left: 12px; pointer-events: auto; cursor: zoom-in;
+  display: flex; align-items: center; gap: 18px;
+  border-radius: 50%; opacity: .82; transition: opacity .15s;
+}
+.minimapa:hover { opacity: 1; }
+.minimapa canvas { display: block; filter: drop-shadow(0 3px 6px rgba(29, 20, 66, .35)); }
+.minimapa__lado { display: none; }
+.minimapa.grande {
+  cursor: zoom-out; opacity: 1; z-index: 2; padding: 14px 20px 14px 14px; border-radius: 26px;
+  background: rgba(29, 20, 66, .78); backdrop-filter: blur(4px); box-shadow: var(--sombra);
+  animation: aparecer .2s ease-out;
+}
+.minimapa.grande .minimapa__lado { display: block; max-width: 300px; color: #fff; }
+.minimapa__lado > b { font-family: "Lilita One", sans-serif; font-weight: 400; font-size: 24px; letter-spacing: 1px; color: var(--amarillo); }
+.minimapa__lista { list-style: none; margin: 10px 0 14px; padding: 0; display: grid; gap: 7px; font-weight: 800; font-size: 15px; line-height: 1.2; }
+.minimapa__lista li { display: flex; align-items: center; gap: 9px; }
+.minimapa__lado small { display: block; font-size: 13px; font-weight: 700; line-height: 1.9; opacity: .9; }
+.minimapa__lado kbd { min-width: 22px; height: 22px; padding: 0 5px; font-size: 12px; border-width: 2px; border-radius: 6px; box-shadow: 0 2px 0 var(--tinta); }
+
+/* Circulito con el número de la cabaña (mapa, instrucciones, cuadro del nombre) */
+.numero {
+  flex: none; display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+  font-family: "Lilita One", sans-serif; font-size: 15px; color: #fff; border: 2px solid #fff;
+}
+.numero--ayuda { width: 20px; height: 20px; font-size: 12px; background: var(--amarillo); color: var(--tinta); vertical-align: middle; }
+
+/* ---------- Ventanas del juego: instrucciones, nombre y reflexión ---------- */
+.modal__caja--chica { width: min(460px, 100%); text-align: center; }
+.modal--juego kbd { min-width: 28px; height: 28px; padding: 0 7px; font-size: 14px; border-width: 2px; border-radius: 8px; box-shadow: 0 3px 0 var(--tinta); vertical-align: middle; }
+.btn-listo {
+  display: block; margin: 20px auto 0; padding: 12px 30px 14px; border-radius: 18px;
+  font-family: "Lilita One", sans-serif; font-size: 22px; letter-spacing: 1px;
+  color: #fff; background: var(--verde); box-shadow: 0 6px 0 var(--verde-osc);
+}
+.btn-listo:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--verde-osc); }
+.btn-cancelar { padding: 12px 22px 14px; border-radius: 18px; font-weight: 900; font-size: 16px; color: var(--tinta); background: #e9e5ff; box-shadow: 0 6px 0 #c9c1ff; }
+.btn-cancelar:active { transform: translateY(4px); box-shadow: 0 2px 0 #c9c1ff; }
+
+.instrucciones { font-size: 16px; line-height: 1.45; user-select: text; -webkit-user-select: text; }
+.instrucciones__mision { margin: 0 0 14px; padding: 14px 18px; border-radius: 18px; background: #fff6d6; font-size: 18px; }
+.instrucciones__pasos { margin: 0; padding-left: 24px; display: grid; gap: 9px; font-weight: 700; }
+.instrucciones h3 { margin: 20px 0 10px; font-family: "Lilita One", sans-serif; font-weight: 400; font-size: 24px; letter-spacing: 1px; color: var(--cielo-2); }
+.lista-temas { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 16px; font-weight: 800; }
+.lista-temas li { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: 14px; background: #f3f0ff; line-height: 1.2; }
+
+.nombre__cabana { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 6px 40px 16px; font-family: "Lilita One", sans-serif; font-size: 26px; line-height: 1.15; color: var(--cielo-2); }
+.nombre__pregunta { display: block; margin-bottom: 12px; font-weight: 800; font-size: 17px; }
+.nombre__campo {
+  width: 100%; padding: 13px 16px; border-radius: 16px; border: 3px solid var(--tinta); outline: none;
+  font: inherit; font-weight: 800; font-size: 20px; text-align: center; color: var(--tinta); background: #f8f6ff;
+}
+.nombre__campo:focus { border-color: var(--cielo-2); box-shadow: 0 0 0 4px rgba(123, 92, 255, .25); }
+.nombre__campo.falta { border-color: #ff5d73; animation: temblor .3s; }
+@keyframes temblor { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.nombre__botones { display: flex; justify-content: center; align-items: flex-start; gap: 14px; margin-top: 20px; }
+.nombre__botones .btn-listo { margin: 0; }
+
+.cabana__numero { display: table; margin: 0 auto 8px; padding: 4px 16px 6px; border-radius: 999px; color: #fff; font-family: "Lilita One", sans-serif; font-size: 16px; letter-spacing: 1px; }
+.modal__caja h2.cabana__titulo { margin: 0 44px 10px; font-size: clamp(28px, 4.5vw, 40px); letter-spacing: 1px; line-height: 1.1; }
+.cabana__presenta { margin: 0 0 16px; text-align: center; font-size: 18px; font-weight: 700; }
+.cabana__presenta b { font-weight: 900; }
+.cabana__texto { padding: 18px 22px; border-radius: 20px; background: #f3f0ff; font-size: 18px; line-height: 1.55; user-select: text; -webkit-user-select: text; }
+.cabana__texto h3 { margin: 0 0 10px; font-family: "Lilita One", sans-serif; font-weight: 400; font-size: 24px; color: var(--cielo-2); }
+.cabana__texto p { margin: 0 0 12px; }
+.cabana__texto ul { margin: 0 0 12px; padding-left: 24px; }
+.cabana__texto > :last-child { margin-bottom: 0; }
+.tecla-enter { height: 52px; font-size: 18px; letter-spacing: 1px; background: linear-gradient(180deg, #d9ffe6, #6fe09b); }
+
+@media (max-width: 760px), (max-aspect-ratio: 1/1) {
+  .minimapa.grande { flex-direction: column; align-items: flex-start; right: 12px; max-height: calc(100vh - 24px); overflow: auto; }
+  .lista-temas { grid-template-columns: 1fr; }
+}
+
+/* ---------- Entrar y salir de las cabañas ---------- */
+.minimapa[hidden] { display: none; }
+.fundido { position: fixed; inset: 0; z-index: 9; background: var(--tinta); opacity: 0; transition: opacity .35s; }
+.fundido.activo { opacity: 1; }
+.fundido[hidden] { display: none; }

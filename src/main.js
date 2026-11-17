@@ -4,6 +4,7 @@ import { cargarColores, guardarColores } from './sistemas/guardado.js';
 import { EscenaMenu } from './escenas/EscenaMenu.js';
 import { EscenaMundo } from './escenas/EscenaMundo.js';
 import { iniciarMenuUI } from './ui/menuUI.js';
+import { crearJuegoUI } from './ui/juegoUI.js';
 
 const colores = cargarColores();
 const lienzo = document.getElementById('escena');
@@ -33,6 +34,9 @@ function mostrarAviso(texto) {
   if (texto) aviso.innerHTML = texto;
 }
 
+// Ventanas del juego: instrucciones, nombre del estudiante y reflexión de cada cabaña
+const juegoUI = crearJuegoUI();
+
 // Cambia del menú al mundo: mismo lienzo, mismo personaje y mismo carro (con sus colores)
 let mundo = null;
 function entrarAlMundo() {
@@ -42,7 +46,7 @@ function entrarAlMundo() {
   document.getElementById('hud').hidden = false;
   mundo = new EscenaMundo({
     renderer: menu.renderer, lienzo, personaje: menu.personaje, vehiculo: menu.vehiculo,
-    entorno: menu.scene.environment, alAviso: mostrarAviso,
+    entorno: menu.scene.environment, alAviso: mostrarAviso, ui: juegoUI,
   });
 }
 

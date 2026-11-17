@@ -1,6 +1,6 @@
 // Lleva la cuenta de qué teclas están pulsadas y las traduce a acciones del juego.
 const TECLAS_JUEGO = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
-  'ShiftLeft', 'ShiftRight', 'Space', 'KeyE'];
+  'ShiftLeft', 'ShiftRight', 'Space', 'KeyE', 'Enter', 'KeyM'];
 
 export class Teclado {
   constructor() {
@@ -15,6 +15,13 @@ export class Teclado {
     });
     window.addEventListener('keyup', (e) => this.pulsadas.delete(e.code));
     window.addEventListener('blur', () => this.pulsadas.clear());
+  }
+
+  // Mientras hay una ventana abierta (instrucciones, nombre, reflexión) el juego no escucha el teclado
+  pausar(si) {
+    this.activo = !si;
+    this.pulsadas.clear();
+    this.recientes.clear();
   }
 
   // true solo en el momento de pulsar la tecla (no mientras se mantiene)

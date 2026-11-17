@@ -43,9 +43,13 @@ export class CamaraSeguimiento {
   // Coloca la cámara justo detrás de alguien que mira hacia "anguloPersonaje"
   ponerDetras(anguloPersonaje) { this.angulo = anguloPersonaje + Math.PI; }
 
+  // Para los cambios de lugar (entrar o salir de una cabaña): la cámara salta en vez de viajar
+  saltar() { this.listo = false; }
+
   // detras: si se da un ángulo (al conducir), la cámara vuelve sola a ponerse detrás.
   // alejar: multiplica la distancia (1 = normal).
-  actualizar(dt, pies, { detras = null, alejar = 1 } = {}) {
+  // caja: { minX, maxX, minY, maxY, minZ, maxZ } de la que la cámara no sale (dentro de una cabaña).
+  actualizar(dt, pies, { detras = null, alejar = 1, caja = null } = {}) {
     this.tiempo += dt;
     this.alejar += (alejar - this.alejar) * (1 - Math.exp(-3 * dt));
     if (detras !== null && this.tiempo - this.ultimoArrastre > 1.5) {
@@ -64,7 +68,9 @@ export class CamaraSeguimiento {
     c.set(this.foco.x + Math.sin(this.angulo) * horizontal,
       this.foco.y + Math.sin(this.inclinacion) * distancia,
       this.foco.z + Math.cos(this.angulo) * horizontal);
-    c.y = Math.max(c.y, this.terreno.altura(c.x, c.z) + 0.35);   // que no se meta bajo tierra
+    if (caja) {
+      c.set(limitar(c.x, caja.minX, caja.maxX), limitar(c.y, caja.minY, caja.maxY), limitar(c.z, caja.minZ, caja.maxZ));
+    } else c.y = Math.max(c.y, this.terreno.altura(c.x, c.z) + 0.35);   // que no se meta bajo tierra
     this.camara.lookAt(this.foco);
   }
 }
